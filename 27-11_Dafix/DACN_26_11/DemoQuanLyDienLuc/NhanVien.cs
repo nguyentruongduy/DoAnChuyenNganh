@@ -462,15 +462,15 @@ namespace DemoQuanLyDienLuc
 
                     // Bước 3: Truy vấn lấy danh sách khách hàng theo khu vực
                     string queryGetKhachHang = @"
-                        SELECT MaKhachHang
-                        FROM KhachHang
-                        WHERE MaTinh = @maTinh AND MaHuyen = @maHuyen AND MaXa = @maXa";
+    SELECT MaKhachHang
+    FROM KhachHang
+    WHERE MaTinh = @maTinh AND MaHuyen = @maHuyen AND MaXa = @maXa";
 
                     SqlParameter[] parameters = {
-            new SqlParameter("@maTinh", PCTinh),
-            new SqlParameter("@maHuyen", PCHuyen),
-            new SqlParameter("@maXa", PCXa)
-        };
+    new SqlParameter("@maTinh", PCTinh),
+    new SqlParameter("@maHuyen", PCHuyen),
+    new SqlParameter("@maXa", PCXa)
+};
 
                     DataTable khachHangTable = db.getDataTable(queryGetKhachHang, parameters);
 
@@ -482,13 +482,16 @@ namespace DemoQuanLyDienLuc
                             string maKhachHang = row["MaKhachHang"].ToString();
 
                             string queryInsertQuanLyKhachHang = @"
-                                INSERT INTO QuanLyKhachHang (MaKhachHang, MaNhanVien)
-                                VALUES (@maKhachHang, @maNhanVien)";
+                                    INSERT INTO QuanLyKhachHang (MaKhachHang, MaNhanVien, MaTinh, MaHuyen, MaXa)
+                                    VALUES (@maKhachHang, @maNhanVien, @maTinh, @maHuyen, @maXa)";
 
                             using (SqlCommand insertCmd = new SqlCommand(queryInsertQuanLyKhachHang, conn))
                             {
                                 insertCmd.Parameters.AddWithValue("@maKhachHang", maKhachHang);
                                 insertCmd.Parameters.AddWithValue("@maNhanVien", maNhanVien);
+                                insertCmd.Parameters.AddWithValue("@maTinh", PCTinh);
+                                insertCmd.Parameters.AddWithValue("@maHuyen", PCHuyen);
+                                insertCmd.Parameters.AddWithValue("@maXa", PCXa);
 
                                 try
                                 {
@@ -514,6 +517,7 @@ namespace DemoQuanLyDienLuc
                     {
                         MessageBox.Show("Không có khách hàng trong khu vực được chọn.");
                     }
+
                 }
                 catch (Exception ex)
                 {

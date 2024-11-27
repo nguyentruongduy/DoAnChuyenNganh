@@ -377,6 +377,51 @@ namespace DemoQuanLyDienLuc
                                         new SqlParameter("@ViTriLapDat", viTriLapDat)
                                     };
 
+                                    string checkQuery = @"
+                        SELECT MaNhanVien 
+                        FROM QuanLyKhachHang
+                        WHERE MaTinh = @MaTinh AND MaHuyen = @MaHuyen AND MaXa = @MaXa";
+
+                                    using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                                    {
+                                        checkCmd.Parameters.AddWithValue("@MaTinh", tinh);
+                                        checkCmd.Parameters.AddWithValue("@MaHuyen", huyen);
+                                        checkCmd.Parameters.AddWithValue("@MaXa", xa);
+
+                                        var maNhanVien = checkCmd.ExecuteScalar();
+
+                                        if (maNhanVien != null)
+                                        {
+                                            // Thêm mã nhân viên vào bảng QuanLyKhachHang
+                                            string insertNhanVienQuery = @"
+                                INSERT INTO QuanLyKhachHang (MaKhachHang, MaNhanVien, MaTinh, MaHuyen, MaXa)
+                                VALUES (@MaKhachHang, @MaNhanVien, @MaTinh, @MaHuyen, @MaXa)";
+
+                                            SqlParameter[] insertParams2 = new SqlParameter[]
+                                            {
+                                                new SqlParameter("@MaKhachHang", newMaKhachHang),
+                                                new SqlParameter("@MaNhanVien", maNhanVien),
+                                                new SqlParameter("@MaTinh", tinh),
+                                                new SqlParameter("@MaHuyen", huyen),
+                                                new SqlParameter("@MaXa", xa)
+                                            };
+
+                                            int result2 = db.getNonQuery(insertNhanVienQuery, insertParams2);
+                                            if (result2 > 0)
+                                            {
+                                                MessageBox.Show("Thêm khách hàng và nhân viên quản lý thành công!");
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Thêm nhân viên quản lý thất bại.");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("Không tìm thấy nhân viên quản lý cho khu vực này.");
+                                        }
+                                    }
+
                                     // Thực hiện câu lệnh thêm mới vào cơ sở dữ liệu
                                     int result1 = db.getNonQuery(insertQuery, insertParams);
 
